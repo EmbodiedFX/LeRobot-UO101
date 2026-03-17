@@ -1,5 +1,8 @@
 # 在 UO101 机械臂上跑通遥操、微调和推理
 
+<img width="2048" height="1536" alt="image" src="https://github.com/user-attachments/assets/0fbf172c-a654-41e2-9d60-25f28cdeaf62" />
+
+
 ## 一、 背景
 
 ## 二、适用环境
@@ -96,6 +99,7 @@ ssh 你的用户名@虚拟机IP
   model_nb = self.ping(id_, num_retry=2)
   ```
 这样做，如果可以解决，那对应的问题原因可以解释为：同一个端口一旦被 close 再 reopen，LeRobot/串口这条链路的“最前两笔通信”会出问题（边界上有残留/错位的串口状态或数据，导致最开始的两次 ping 被吃掉或解析错）。
+
 2. 如果电机有连通性问题，可以用官方提供的脚本进行排查。具体参照[教程](https://github.com/iotdesignshop/Feetech-tuna)。
 
 ## 六、遥操与数据采集
@@ -116,3 +120,9 @@ ssh 你的用户名@虚拟机IP
     --teleop.id=my_awesome_leader_arm \
     --display_data=false
   ```
+3. 准备 huggingface 的配置，包括 token 配置，
+  ```bash
+  hf auth login --token ${HUGGINGFACE_TOKEN} --add-to-git-credential
+  ```
+4. 
+5. 
