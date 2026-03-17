@@ -20,6 +20,9 @@
   - 每个本体还需要一块控制板，这个没法打印，需要参考这里的[渠道](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts)买
   - 还需要 12 块 [Feetech 电机](https://github.com/iotdesignshop/Feetech-tuna)（两台本体各需 6 块），这个也没法打印
 
+摄像头
+- 两个，一个拍全局信息（front），一个拍机械臂爪子（wrist）。需要有固定的地方或者能够固定在机械臂上。
+
 ## 三、macOS 上准备 Ubuntu 虚拟机
 
 1. 从[官网](https://www.parallels.cn/products/desktop/download/)下载并安装 Parallels Desktop，这是 Mac 电脑上常用的虚拟机软件。
@@ -81,11 +84,11 @@ ssh 你的用户名@虚拟机IP
 4. 根据[教程](https://huggingface.co/docs/lerobot/so101#2-set-the-motors-ids-and-baudrates)给两个本体的每个电机**设定 ID**（只需要设置一次），用到的命令大致如下（需要根据实际端口名称微调）：
   ```bash
   lerobot-setup-motors --robot.type=so101_follower --robot.port=/dev/ttyACM0
-  lerobot-setup-motors --robot.type=so101_leader --robot.port=/dev/ttyACM1
+  lerobot-setup-motors --teleop.type=so101_leader --teleop.port=/dev/ttyACM1
   ```
 5. 根据[教程](https://huggingface.co/docs/lerobot/so101#calibrate)校准两个本体（定位每个电机的工作范围），用到的命令大致如下（需要根据实际端口名称微调）：
   ```bash
-  lerobot-calibrate --teleop.type=so101_follower --teleop.port=/dev/ttyACM0 --teleop.id=my_awesome_follower_arm
+  lerobot-calibrate --robot.type=so101_follower --robot.port=/dev/ttyACM0 --robot.id=my_awesome_follower_arm
   lerobot-calibrate --teleop.type=so101_leader --teleop.port=/dev/ttyACM1 --teleop.id=my_awesome_leader_arm
   ```
 
@@ -104,25 +107,97 @@ ssh 你的用户名@虚拟机IP
 
 ## 六、遥操与数据采集
 
-1. 往 follower 装上摄像头，并连接 MacBook 。随后根据[教程](https://huggingface.co/docs/lerobot/il_robots?teleoperate_koch_camera=Command#find-your-camera)看是否能够找到它（注意区分 MacBook 本身的摄像头），记住它的 ID（如显示`Id: /dev/video2`的话，ID就是2）、分辨率和帧率信息。具体命令：
+1. 往 follower 装上摄像头，并连接 MacBook。随后根据[教程](https://huggingface.co/docs/lerobot/il_robots?teleoperate_koch_camera=Command#find-your-camera)看是否能够找到它（注意区分 MacBook 本身的摄像头），记住它的 ID（如显示`Id: /dev/video2`的话，ID就是2）、基础分辨率和帧率信息。具体命令：
   ```bash
   lerobot-find-cameras opencv
   ```
+
+如果找不到，检查虚拟机的 Devices 是否勾选了对应的相机，如：
+
+<img width="331" height="220" alt="Screenshot 2026-03-17 at 18 53 12" src="https://github.com/user-attachments/assets/ff59d541-17e8-4187-83f8-2a381b79d9be" />
+
+全部支持的分辨率可以用形如下面的命令查询：
+
+```bash
+ffmpeg -f v4l2 -list_formats all -i /dev/video2
+```
+
+可以尝试用下述命令尝试拍个照（`-i`参数需要根据摄像头路径调整）
+
+```bash
+# 在虚拟机中的 HOME 路径
+ffmpeg -f v4l2 -framerate 30 -video_size 1920x1080 -i /dev/video2 -frames:v 1 test.jpg
+```
+
+然后可以将 Ubuntu 里的图片拉出来 Macbook 查看：
+
+```bash
+scp [你在虚拟机的用户名]@[虚拟机IP]:~/test.jpg .
+```
+
 2. 根据[教程](https://huggingface.co/docs/lerobot/il_robots#teleoperate-with-cameras)尝试遥操，用到的命令大致如下（需要根据实际端口名称和摄像头信息微调）：
+
   ```bash
   lerobot-teleoperate \
     --robot.type=so101_follower \
     --robot.port=/dev/ttyACM0 \
     --robot.id=my_awesome_follower_arm \
-    --robot.cameras="{ front: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 30}}" \
+    --robot.cameras="{ front: {type: opencv, index_or_path: 4, width: 1920, height: 1080, fps: 30}, wrist: {type: opencv, index_or_path: 2, width: 1920, height: 1080, fps: 30}}" \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM1 \
+    --teleop.id=my_awesome_leader_arm \
+    --display_data=false
+
+  lerobot-teleoperate \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM0 \
+    --robot.id=my_awesome_follower_arm \
+    --robot.cameras="{ front: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 15, fourcc: MJPG}, wrist: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 15, fourcc: MJPG}}" \
     --teleop.type=so101_leader \
     --teleop.port=/dev/ttyACM1 \
     --teleop.id=my_awesome_leader_arm \
     --display_data=false
   ```
-3. 准备 huggingface 的配置，包括 token 配置，
+
+3. 随后开始采集数据。以“抓取一根香蕉为例并放进箱子为例”，先采集一个 episode：
   ```bash
-  hf auth login --token ${HUGGINGFACE_TOKEN} --add-to-git-credential
+  lerobot-record \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM0 \
+    --robot.id=my_awesome_follower_arm \
+    --robot.cameras="{ front: {type: opencv, index_or_path: 4, width: 1920, height: 1080, fps: 30}, wrist: {type: opencv, index_or_path: 2, width: 1920, height: 1080, fps: 30}}" \
+    --teleop.type=so101_leader \
+    --teleop.port=/dev/ttyACM1 \
+    --teleop.id=my_awesome_leader_arm \
+    --display_data=false \
+    --dataset.repo_id=samuel/record-test \
+    --dataset.num_episodes=1 \
+    --dataset.episode_time_s=20 \
+    --dataset.reset_time_s=10 \
+    --dataset.single_task="Grab the banana and place it into the bin" \
+    --dataset.streaming_encoding=true \
+    --dataset.encoder_threads=2 \
+    --dataset.push_to_hub=False
   ```
-4. 
-5. 
+
+  如果要回放这个 episode（机械臂复刻运动轨迹），可以使用下述命令：
+  ```bash
+  lerobot-replay \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM0 \
+    --robot.id=my_awesome_follower_arm \
+    --dataset.repo_id=/home/samuel/.cache/huggingface/lerobot/samuel/record-test \
+    --dataset.episode=0 \
+    --play_sounds=false
+  ```
+4. 要继续采集，可以重新运行同样的命令并加`--resume=true`，也即：
+  ```bash
+    lerobot-replay \
+    --robot.type=so101_follower \
+    --robot.port=/dev/ttyACM0 \
+    --robot.id=my_awesome_follower_arm \
+    --dataset.repo_id=/home/samuel/.cache/huggingface/lerobot/samuel/record-test \
+    --dataset.episode=0 \
+    --play_sounds=false \
+    --resume=true
+  ```
