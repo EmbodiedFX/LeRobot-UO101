@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FRONT_UID='把 front 相机的 uid 填这里'
-WRIST_UID='把 wrist 相机的 uid 填这里'
-FOLLOWER_PORT='把 follower 的端口路径填这里'
-LEADER_PORT='把 leader 的端口路径填这里'
-
 read FRONT_INDEX WRIST_INDEX < <(
 python - "$FRONT_UID" "$WRIST_UID" <<'PY'
 import sys
