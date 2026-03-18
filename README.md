@@ -93,7 +93,7 @@
   lerobot-calibrate --teleop.type=so101_leader --teleop.port=/$LEADER_PORT --teleop.id=my_awesome_leader_arm
   ```
 
-### Trouble shooting
+### Troubleshooting
 
 1. 如果出现：MacBook 连上串联的六个电机后，`lerobot-calibrate`命令第一次能跑，第二次却找不到个别电机（如出现错误`Missing motor IDs`），可以尝试修改 lerobot 源码`src/lerobot/motors/motors_bus.py`：
   ```python
@@ -158,7 +158,7 @@
   ```
 6. 可以执行下面的命令来增量地添加一集数据：
   ```bash
-  ./record_1e_macos.sh --append
+  ./record_1e_macos.sh --resume
   ```
 
 上述脚本会自动调用`rerun.io`，可以更直观地可视化每集数据的采集过程：
