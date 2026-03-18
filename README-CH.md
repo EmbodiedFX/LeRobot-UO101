@@ -1,4 +1,4 @@
-# 在 UO101 机械臂上跑通遥操、微调和推理
+# 在 SO101 机械臂上跑通遥操、微调和推理
 
 <img width="2048" height="1536" alt="image" src="https://github.com/user-attachments/assets/0fbf172c-a654-41e2-9d60-25f28cdeaf62" />
 
@@ -14,7 +14,7 @@
   - Apple Silicon（M3 Pro）
   - conda / miniforge
 
-[UO101 机械臂](https://github.com/TheRobotStudio/SO-ARM100)
+[SO101 机械臂](https://github.com/TheRobotStudio/SO-ARM100)
   - 两台本体，一台 Leader，一台 Follower（遥操时必要的两个角色）
     - 如果没有本体，可以使用 3D 打印机打印部件（参照[此教程](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#printing-the-parts)）
   - 每个本体还需要一块控制板，这个没法打印，需要参考这里的[渠道](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts)买
@@ -68,7 +68,7 @@ ssh 你的用户名@虚拟机IP
   pip install -e .
   ```
 
-## 五、UO101 机械臂组装
+## 五、SO101 机械臂组装
 
 1. 根据[教程](https://huggingface.co/docs/lerobot/so101#clean-parts)组装好 Leader 和 Follower，其中每个电机组装前最好先接上一条线。
 2. 将每个本体的控制板连接上电源，并连接上 MacBook（在弹窗选择连到 Ubuntu 虚拟机）。特别地，第一次连接时，需要通过下面的命令确认每个本体控制板连的是哪个端口：
