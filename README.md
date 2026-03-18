@@ -129,12 +129,9 @@
   ```bash
   chmod +x record_1e_macos.sh
   ./record_1e_macos.sh
-  # 脚本里写死了若干任务元信息
-  # 如将与采集数据配对的文本指令 "Grab the banana and place it into the bin"
-  # 又如数据集保存的相对路径 local/record-test
-  # 后续如要为新任务采集数据、或更改某些参数，以其为模板修改相关项即可
   ```
-5. 默认设置下，采集出来的数据会在`~/.cache/huggingface/lerobot/local/record-test`。一集的数据包含以下内容：
+5. 脚本里硬编码了若干元信息。如将与采集数据配对的文本指令 `dataset.single_task="Grab the banana and place it into the bin"`，又如数据集保存的相对路径`dataset.repo_id=local/record-test`，每集采集的时长`dataset.episode_time_s=20`等。可以按需修改。
+5. 一集采集出来的数据样例如下：
   ```
   (lerobot) EmbodiedFX@MacBook lerobot % tree ~/.cache/huggingface/lerobot/local/record-test
   /Users/EmbodiedFX/.cache/huggingface/lerobot/local/record-test
@@ -156,12 +153,12 @@
           └── chunk-000
             └── file-000.mp4
   ```
-6. 可以执行下面的命令来增量地添加一集数据：
+6. 采集完第一集数据后，后续可以添加`resume`选项，增量地添加一集数据：
   ```bash
   ./record_1e_macos.sh --resume
   ```
 
-上述脚本会自动调用`rerun.io`，可以更直观地可视化每集数据的采集过程：
+上述脚本会自动调用`rerun.io`，可以更直观地可视化数据的采集过程和结果：
 
 <img width="1624" height="1010" alt="Screenshot 2026-03-18 at 18 36 27" src="https://github.com/user-attachments/assets/9ef7f990-d2b4-474a-b3b7-0cd506dae9a7" />
 
