@@ -40,4 +40,4 @@ lerobot-teleoperate \
   --teleop.type=so101_leader \
   --teleop.port=$LEADER_PORT \
   --teleop.id=my_awesome_leader_arm \
-  --display_data=false
+  --display_data=true
