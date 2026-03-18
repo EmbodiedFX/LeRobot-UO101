@@ -168,7 +168,7 @@
 **Remarks**
 
 1. 后续模型推理只能看到摄像头的视频输入，所以采集数据时，最好看着实时捕获的视频，采取**只看视频画面也能完成任务**的动作路径——去除模型学不到的上帝视角。 
-2. 之所以遥操要包到脚本里，而不是像[教程](https://huggingface.co/docs/lerobot/il_robots#teleoperate-with-cameras)那样简洁，是因为 MacBook 不同于 Ubuntu 等，摄像头没有固定路径，且 ID 也会随着调用而出现漂移的情况，唯一固定的是它们的 UID。因此需要个脚本，先根据 UID 动态找到目标摄像头的 ID，然后再送给 `lerobot-teleoperate` 命令使用。数据采集同理。
+2. 之所以遥操和数据采集要包到脚本里，而不是像[教程](https://huggingface.co/docs/lerobot/il_robots#teleoperate-with-cameras)那样简洁，是因为 MacBook 中摄像头没有固定路径和ID，单次插入中唯一固定的是它们的 UID。因此需要一个脚本，先根据 UID 找到目标摄像头的动态 ID，然后再送给`lerobot-teleoperate`和`lerobot-record`命令使用。
 3. 脚本里关于摄像头分辨率、帧率等的设定可以改。要看摄像头本身所支持的配置，可以使用脚本`cam_formats.swift`：
   ```bash
   swift cam_formats.swift '摄像头的UID'
