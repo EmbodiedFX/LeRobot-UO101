@@ -23,34 +23,14 @@
 摄像头
 - 两个，一个拍全局信息（front），一个拍机械臂爪子（wrist）。需要有固定的地方或者能够固定在机械臂上。
 
-## 三、macOS 上准备 Ubuntu 虚拟机
+## 三、在 MacBook 准备 LeRobot 环境
 
-1. 从[官网](https://www.parallels.cn/products/desktop/download/)下载并安装 Parallels Desktop，这是 Mac 电脑上常用的虚拟机软件。
-2. 在[官网](https://cdimage.ubuntu.com/releases/22.04/release/)选择`64-bit ARM (ARMv8/AArch64) server install image`下载 Ubuntu 22.04.5 LTS 的镜像`.iso`文件。
-3. 在 Parallels Desktop 中从`.iso`手动安装 Ubuntu。都按默认选项来就好。<img width="984" height="696" alt="Screenshot 2026-03-17 at 11 12 06" src="https://github.com/user-attachments/assets/22e9e7fd-ccd7-4788-a6bc-68db1a7a1c59" />
-4. 安装完成后，在虚拟机的终端中安装`openssh`，并查看虚拟机的 IP 地址：
-  ```bash
-  sudo apt update
-  sudo apt install openssh-server -y
-  
-  ip a
-  ```
-
-后面你就可以在 MacBook 的本地终端通过
-
-```bash
-ssh 你的用户名@虚拟机IP
-```
-远程连上 Ubuntu。使用本地终端，最大的好处是 macOS 上已经习惯的终端字体、键盘快捷键尤其是**剪切板使用方式**（比如从本地复制命令粘贴到虚拟机执行，或者反过来），一个也不用重新适应。
-
-## 四、在 Ubuntu 中准备 LeRobot 环境
-
-1. 先安装 Miniforge：
+1. 如果`conda`命令不可用，可以先安装 Anaconda / Miniforge。下面以 Miniforge 为例：
   ```bash
   wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
   bash Miniforge3-$(uname)-$(uname -m).sh
   ```
-2. 安装完成后，重新打开 Ubuntu 的终端，参考[教程](https://huggingface.co/docs/lerobot/installation)创建环境：
+2. 安装完成后，重新打开的终端，参考[教程](https://huggingface.co/docs/lerobot/installation)创建环境：
   ```bash
   conda create -y -n lerobot python=3.12
   conda activate lerobot
@@ -58,38 +38,35 @@ ssh 你的用户名@虚拟机IP
   ```
 3. 随后下载并安装`lerobot`：
   ```bash
-  sudo apt-get update
-  sudo apt-get install -y build-essential gcc python3-dev linux-headers-$(uname -r)
-  python -m pip install -U pip setuptools wheel
-  python -m pip install evdev
-
   git clone https://github.com/huggingface/lerobot.git
   cd lerobot
   pip install -e .
+  pip install -e ".[feetech]"  # 电机相关
+  pip install cv2-enumerate-cameras  # 摄像头相关
   ```
-
-## 五、SO101 机械臂组装
+c
+## 四、SO101 机械臂组装
 
 1. 根据[教程](https://huggingface.co/docs/lerobot/so101#clean-parts)组装好 Leader 和 Follower，其中每个电机组装前最好先接上一条线。
-2. 将每个本体的控制板连接上电源，并连接上 MacBook（在弹窗选择连到 Ubuntu 虚拟机）。特别地，第一次连接时，需要通过下面的命令确认每个本体控制板连的是哪个端口：
+2. 将每个本体的控制板连接上电源，并连接上 MacBook。随后通过下面的命令确认每个本体控制板连的是哪个端口：
   ```bash
   lerobot-find-port
-  # 随后根据弹出的文字操作
+  # 根据弹出的文字操作
   ```
-3. 而且往后每次连接电脑和控制板，都需要通过类似下面的命令授予端口的访问权限：
+3. 往后每次连接 MacBook 和控制板，都需要通过类似下面的命令授予端口的访问权限：
   ```bash
-  sudo chmod a+rw /dev/ttyACM0
-  sudo chmod a+rw /dev/ttyACM1
+  sudo chmod a+rw /dev/tty.usbmodem5A7A0594001  # leader
+  sudo chmod a+rw /dev/tty.usbmodem5A7C1172111  # follower
   ```
 4. 根据[教程](https://huggingface.co/docs/lerobot/so101#2-set-the-motors-ids-and-baudrates)给两个本体的每个电机**设定 ID**（只需要设置一次），用到的命令大致如下（需要根据实际端口名称微调）：
   ```bash
-  lerobot-setup-motors --robot.type=so101_follower --robot.port=/dev/ttyACM0
-  lerobot-setup-motors --teleop.type=so101_leader --teleop.port=/dev/ttyACM1
+  lerobot-setup-motors --robot.type=so101_follower --robot.port=/dev/tty.usbmodem5A7C1172111
+  lerobot-setup-motors --teleop.type=so101_leader --teleop.port=/dev/tty.usbmodem5A7A0594001
   ```
-5. 根据[教程](https://huggingface.co/docs/lerobot/so101#calibrate)校准两个本体（定位每个电机的工作范围），用到的命令大致如下（需要根据实际端口名称微调）：
+5. 根据[教程](https://huggingface.co/docs/lerobot/so101#calibrate)校准两个本体——定位每个电机的工作范围（机械臂每连到一台新电脑做一次，因为校准生成的文件是存放到本地的），用到的命令大致如下（需要根据实际端口名称微调）：
   ```bash
-  lerobot-calibrate --robot.type=so101_follower --robot.port=/dev/ttyACM0 --robot.id=my_awesome_follower_arm
-  lerobot-calibrate --teleop.type=so101_leader --teleop.port=/dev/ttyACM1 --teleop.id=my_awesome_leader_arm
+  lerobot-calibrate --robot.type=so101_follower --robot.port=/dev/tty.usbmodem5A7C1172111 --robot.id=my_awesome_follower_arm
+  lerobot-calibrate --teleop.type=so101_leader --teleop.port=/dev/tty.usbmodem5A7A0594001 --teleop.id=my_awesome_leader_arm
   ```
 
 ### Trouble shooting
@@ -107,59 +84,149 @@ ssh 你的用户名@虚拟机IP
 
 ## 六、遥操与数据采集
 
-1. 往 follower 装上摄像头，并连接 MacBook。随后根据[教程](https://huggingface.co/docs/lerobot/il_robots?teleoperate_koch_camera=Command#find-your-camera)看是否能够找到它（注意区分 MacBook 本身的摄像头），记住它的 ID（如显示`Id: /dev/video2`的话，ID就是2）、基础分辨率和帧率信息。具体命令：
-  ```bash
-  lerobot-find-cameras opencv
-  ```
+1. 分别装上两个摄像头（一个 front，一个 wrist），并将它们连接 MacBook。
 
-如果找不到，检查虚拟机的 Devices 是否勾选了对应的相机，如：
-
-<img width="331" height="220" alt="Screenshot 2026-03-17 at 18 53 12" src="https://github.com/user-attachments/assets/ff59d541-17e8-4187-83f8-2a381b79d9be" />
-
-全部支持的分辨率可以用形如下面的命令查询：
+通过插拔摄像头和执行以下命令确定它们的 UID
 
 ```bash
-ffmpeg -f v4l2 -list_formats all -i /dev/video2
+cat >/tmp/list_cams.swift <<'SWIFT'
+import AVFoundation
+
+for (i, d) in AVCaptureDevice.devices(for: .video).enumerated() {
+    print("[\(i)] \(d.localizedName)\tUID=\(d.uniqueID)")
+}
+SWIFT
+
+swift /tmp/list_cams.swift
 ```
 
-可以尝试用下述命令尝试拍个照（`-i`参数需要根据摄像头路径调整）
+比如最终的结论可能是：front 摄像头的 UID 是 `0x1400001bcf2cd1`，wrist 摄像头的 UID 是 `0x1300001bcf2cd1`。这个只需要确定一次，重新插拔不会改变。
+
+在合适的目录新建如下 Python 脚本（命名为`teleop_macos.sh`）：
+
+```python
+#!/usr/bin/env bash
+set -euo pipefail
+
+FRONT_UID='把 front 相机的 uid 填这里'
+WRIST_UID='把 wrist 相机的 uid 填这里'
+FOLLOWER_PORT='把 follower 的端口路径填这里'
+LEADER_PORT='把 leader 的端口路径填这里'
+
+read FRONT_INDEX WRIST_INDEX < <(
+python - "$FRONT_UID" "$WRIST_UID" <<'PY'
+import sys
+import cv2
+from cv2_enumerate_cameras import enumerate_cameras
+
+front_uid = sys.argv[1]
+wrist_uid = sys.argv[2]
+
+front_idx = None
+wrist_idx = None
+
+for cam in enumerate_cameras(cv2.CAP_AVFOUNDATION):
+    uid = str(cam.path)
+    if uid == front_uid:
+        front_idx = cam.index
+    if uid == wrist_uid:
+        wrist_idx = cam.index
+
+if front_idx is None:
+    raise SystemExit(f"front camera not found: {front_uid}")
+if wrist_idx is None:
+    raise SystemExit(f"wrist camera not found: {wrist_uid}")
+
+print(front_idx, wrist_idx)
+PY
+)
+
+echo "front index: $FRONT_INDEX"
+echo "wrist index: $WRIST_INDEX"
+
+lerobot-teleoperate \
+  --robot.type=so101_follower \
+  --robot.port=$FOLLOWER_PORT \
+  --robot.id=my_awesome_follower_arm \
+  --robot.cameras="{ front: {type: opencv, backend: 1200, index_or_path: $FRONT_INDEX, width: 1920, height: 1080, fps: 30}, wrist: {type: opencv, backend: 1200, index_or_path: $WRIST_INDEX, width: 1920, height: 1080, fps: 30}}" \
+  --teleop.type=so101_leader \
+  --teleop.port=$LEADER_PORT \
+  --teleop.id=my_awesome_leader_arm \
+  --display_data=false
+```
+
+将`FRONT_UID``WRIST_UID``FOLLOWER_PORT``LEADER_PORT`修改成你的实际情况后，遥操就可以这样跑：
 
 ```bash
-# 在虚拟机中的 HOME 路径
-ffmpeg -f v4l2 -framerate 30 -video_size 1920x1080 -i /dev/video2 -frames:v 1 test.jpg
+chmod +x teleop_macos.sh
+./teleop_macos.sh
 ```
 
-然后可以将 Ubuntu 里的图片拉出来 Macbook 查看：
+> 之所以要包到脚本里，而不是像[教程](https://huggingface.co/docs/lerobot/il_robots#teleoperate-with-cameras)那么整洁，是因为 MacBook 不同于 Ubuntu 等 Linux 系统，摄像头没有固定路径，且其 ID 也会随着调用而不固定、出现漂移的情况。唯一固定的是它们的 UID，因此脚本实际上就是先根据 UID 动态找到目标摄像头的 ID，然后再送给 `lerobot-teleoperate` 命令使用。
+
+脚本里关于摄像头分辨率、帧率等的设定可以改。要看所支持的配置，可以先将新建下述脚本`cam_formats.swift`：
+
+```swift
+import Foundation
+import AVFoundation
+import CoreMedia
+
+func fourCCString(_ code: FourCharCode) -> String {
+    let bytes: [UInt8] = [
+        UInt8((code >> 24) & 0xff),
+        UInt8((code >> 16) & 0xff),
+        UInt8((code >> 8) & 0xff),
+        UInt8(code & 0xff)
+    ]
+    let s = bytes.map { b -> Character in
+        if b >= 32 && b <= 126 {
+            return Character(UnicodeScalar(b))
+        } else {
+            return "."
+        }
+    }
+    return String(s)
+}
+
+guard CommandLine.arguments.count == 2 else {
+    fputs("usage: swift cam_formats.swift <camera-uniqueID>\n", stderr)
+    exit(2)
+}
+
+let uid = CommandLine.arguments[1]
+
+guard let device = AVCaptureDevice(uniqueID: uid) else {
+    fputs("camera not found for UID: \(uid)\n", stderr)
+    exit(1)
+}
+
+print("name: \(device.localizedName)")
+print("uid : \(device.uniqueID)")
+print("formats:")
+
+for (i, format) in device.formats.enumerated() {
+    let desc = format.formatDescription
+    let dims = CMVideoFormatDescriptionGetDimensions(desc)
+    let subtype = CMFormatDescriptionGetMediaSubType(desc)
+    let pixel = fourCCString(subtype)
+
+    let fpsRanges = format.videoSupportedFrameRateRanges
+        .map { r in
+            String(format: "%.3f-%.3f fps", r.minFrameRate, r.maxFrameRate)
+        }
+        .joined(separator: ", ")
+
+    print("[\(i)] \(dims.width)x\(dims.height)  pixel=\(pixel)  fps=\(fpsRanges)")
+}
+```
+
+然后运行下述命令查看：
 
 ```bash
-scp [你在虚拟机的用户名]@[虚拟机IP]:~/test.jpg .
+swift cam_formats.swift '摄像头的UID'
 ```
 
-2. 根据[教程](https://huggingface.co/docs/lerobot/il_robots#teleoperate-with-cameras)尝试遥操，用到的命令大致如下（需要根据实际端口名称和摄像头信息微调）：
-
-  ```bash
-  lerobot-teleoperate \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM0 \
-    --robot.id=my_awesome_follower_arm \
-    --robot.cameras="{ front: {type: opencv, index_or_path: 4, width: 1920, height: 1080, fps: 30}, wrist: {type: opencv, index_or_path: 2, width: 1920, height: 1080, fps: 30}}" \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM1 \
-    --teleop.id=my_awesome_leader_arm \
-    --display_data=false
-
-  lerobot-teleoperate \
-    --robot.type=so101_follower \
-    --robot.port=/dev/ttyACM0 \
-    --robot.id=my_awesome_follower_arm \
-    --robot.cameras="{ front: {type: opencv, index_or_path: 4, width: 640, height: 480, fps: 15, fourcc: MJPG}, wrist: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 15, fourcc: MJPG}}" \
-    --teleop.type=so101_leader \
-    --teleop.port=/dev/ttyACM1 \
-    --teleop.id=my_awesome_leader_arm \
-    --display_data=false
-  ```
-
-3. 随后开始采集数据。以“抓取一根香蕉为例并放进箱子为例”，先采集一个 episode：
+3. 遥操熟悉后，就可以开始采集数据。以“抓取一根香蕉为例并放进箱子为例”，先采集一个 episode：
   ```bash
   lerobot-record \
     --robot.type=so101_follower \
