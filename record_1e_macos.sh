@@ -51,7 +51,7 @@ lerobot-record \
   --robot.type=so101_follower \
   --robot.port=$FOLLOWER_PORT \
   --robot.id=my_awesome_follower_arm \
-  --robot.cameras="{ front: {type: opencv, backend: 1200, index_or_path: $FRONT_INDEX, width: 1920, height: 1080, fps: 30}, wrist: {type: opencv, backend: 1200, index_or_path: $WRIST_INDEX, width: 1920, height: 1080, fps: 30}}" \
+  --robot.cameras="{ front: {type: opencv, backend: 1200, index_or_path: $FRONT_INDEX, width: 640, height: 480, fps: 30}, wrist: {type: opencv, backend: 1200, index_or_path: $WRIST_INDEX, width: 640, height: 480, fps: 30}}" \
   --teleop.type=so101_leader \
   --teleop.port=$LEADER_PORT \
   --teleop.id=my_awesome_leader_arm \
