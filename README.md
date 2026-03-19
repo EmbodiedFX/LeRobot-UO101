@@ -92,6 +92,7 @@
   lerobot-calibrate --robot.type=so101_follower --robot.port=$FOLLOWER_PORT --robot.id=my_awesome_follower_arm
   lerobot-calibrate --teleop.type=so101_leader --teleop.port=/$LEADER_PORT --teleop.id=my_awesome_leader_arm
   ```
+7. 将机械臂固定在桌子的合适位置。
 
 ### Troubleshooting
 
@@ -110,7 +111,7 @@
 
 > 本步的终极目标是采集出能够用来微调模型的任务数据。
 
-1. 分别装上两个摄像头（一个 front，一个 wrist），并将它们连接 MacBook。随后通过插拔摄像头和对比以下命令的运行结果来分别确定它们的 UID：
+1. 分别安装好两个摄像头（一个 front，一个 wrist），并将它们连接 MacBook。随后通过插拔摄像头和对比以下命令的运行结果来分别确定它们的 UID：
   ```bash
   # 每次连接摄像头和 MacBook 都需要重做一次，因为 UID 不固定
   swift list_cams.swift
@@ -276,6 +277,9 @@ wandb login
   --wandb.entity=<your_team_name> \
   --wandb.notes="act banana baseline" \
 ```
+
+<img width="5056" height="3456" alt="W B Chart 3_19_2026, 1_24_41 PM" src="https://github.com/user-attachments/assets/cee1df19-f20a-4bbe-887c-d15de93a5145" />
+
 
 # 七、MacBook 上模型推理控制机械臂
 
