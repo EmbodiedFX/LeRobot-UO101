@@ -3,9 +3,9 @@
 > 本文位于 [https://github.com/EmbodiedFX/LeRobot-SO101](https://github.com/EmbodiedFX/LeRobot-SO101)，English version: [README.md](README.md)
 
 这篇笔记记录的是：在一台干净的 macOS Apple Silicon 机器上，如何从零开始跑通下面三件事：
-1. **数据采集**：xxx
-2. **模型微调**：yyy
-3. **真机推理**：zzz
+1. **数据采集**：先用一台 Leader 臂遥操一台 Follower 臂，配合两个摄像头录下示范轨迹。
+2. **模型微调**：再用这些示范数据训练一个 ACT 模型。
+3. **真机推理**：最后让训练好的模型读取摄像头画面，直接控制 Follower 机械臂执行任务。
 
 <img width="2048" height="1536" alt="image" src="https://github.com/user-attachments/assets/0fbf172c-a654-41e2-9d60-25f28cdeaf62" />
 
