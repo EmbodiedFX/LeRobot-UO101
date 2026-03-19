@@ -59,6 +59,6 @@ lerobot-record \
   --dataset.streaming_encoding=true \
   --dataset.encoder_threads=2 \
   --dataset.push_to_hub=False \
-  --policy.path=$POLICY_PATH \
+  --policy.path=$POLICY_PATH/checkpoints/last/pretrained_model \
   $RESUME_FLAG
   
