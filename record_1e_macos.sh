@@ -56,7 +56,7 @@ lerobot-record \
   --teleop.port=$LEADER_PORT \
   --teleop.id=my_awesome_leader_arm \
   --display_data=true \
-  --dataset.repo_id=local/record-test \
+  --dataset.repo_id=$TRAIN_DATA_PATH \
   --dataset.num_episodes=1 \
   --dataset.episode_time_s=20 \
   --dataset.reset_time_s=10 \
