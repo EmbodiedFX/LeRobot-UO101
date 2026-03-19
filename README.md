@@ -208,7 +208,6 @@ lerobot-train \
   --dataset.repo_id=$TRAIN_DATA_PATH \
   --policy.type=act \
   --output_dir=$POLICY_PATH \
-  --job_name=act_so101_test \
   --policy.device=mps \
   --policy.push_to_hub=False \
   --wandb.enable=false \
@@ -233,7 +232,6 @@ lerobot-train \
   --dataset.repo_id=$TRAIN_DATA_PATH \
   --policy.type=act \
   --output_dir=$POLICY_PATH \
-  --job_name=act_so101_test \
   --policy.device=cuda \
   --policy.push_to_hub=False \
   --wandb.enable=false \
@@ -250,17 +248,34 @@ accelerate launch \
   --dataset.repo_id=$TRAIN_DATA_PATH \
   --policy.type=act \
   --output_dir=$POLICY_PATH \
-  --job_name=act_so101_test \
   --policy.device=cuda \
   --policy.push_to_hub=false \
   --wandb.enable=false \
   --batch_size=1
 ```
 
-亲测8卡H100上2.25小时完成，每张卡约占用3GB内存。
+默认训练10万步。亲测8卡H100上2.25小时完成，每张卡约占用3GB内存。
 
 训练结束后，模型拷贝回 MacBook 的`TRAIN_DATA_PATH`路径。
 
+**Remarks**
+
+lerobot 环境和脚本天然支持 W&B。如果需要使用 W&B 可视化训练过程（训练动态、系统资源使用情况），可以先在终端登陆
+
+```bash
+export WANDB_API_KEY=<你的 W&B API key>
+# 公司网络里也许需要：export WANDB_INSECURE_DISABLE_SSL=true
+wandb login
+```
+
+然后将训练命令中的`--wandb.enable=false`参数按需换成：
+
+```bash
+  --wandb.enable=true \
+  --wandb.project=<your_project_name)> \
+  --wandb.entity=<your_team_name> \
+  --wandb.notes="act banana baseline" \
+```
 
 # 七、MacBook 上模型推理控制机械臂
 
