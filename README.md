@@ -216,7 +216,7 @@ lerobot-train \
   --num_workers=0
 ```
 
-亲测跑得动，但是预估34小时左右。
+亲测跑得动（`batch_size=1`），但是预估需要4小时左右。
 
 ## (二) 在 Ubuntu 服务器上训练
 
@@ -226,7 +226,7 @@ lerobot-train \
 export TRAIN_DATA_PATH=local/record-test
 ```
 
-单卡的话，使用形如以下命令训练（H100上预估8.6小时，占用63G内存）：
+单卡的话，使用形如以下命令训练：
 
 ```bash
 lerobot-train \
@@ -240,7 +240,7 @@ lerobot-train \
   --batch_size=8
 ```
 
-多卡的话，使用形如以下命令训练（`num_processes`和`batch_size`的乘积为 **effective batch size**——此处为 8）：
+多卡可使用形如以下命令训练（`num_processes`和`batch_size`的乘积为 **effective batch size**——此处为 8）：
 
 ```bash
 accelerate launch \
@@ -257,7 +257,7 @@ accelerate launch \
   --batch_size=1
 ```
 
-8卡H100上3.5小时完成，每张卡占用10G内存。
+亲测8卡H100上2.25小时完成，每张卡约占用3GB内存。
 
 训练结束后，模型拷贝回 MacBook 的`TRAIN_DATA_PATH`路径。
 
