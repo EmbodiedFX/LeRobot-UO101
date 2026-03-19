@@ -168,9 +168,10 @@
   ./record_1e_macos.sh --resume
   ```
 
-上述脚本会自动调用`rerun.io`，可以更直观地可视化数据的采集过程和结果：
+上述脚本会自动调用名为`rerun.io`的软件，可以更直观地可视化数据的采集过程和结果：
 
-<img width="1624" height="1010" alt="Screenshot 2026-03-18 at 18 36 27" src="https://github.com/user-attachments/assets/9ef7f990-d2b4-474a-b3b7-0cd506dae9a7" />
+<img width="1624" height="1010" alt="Screenshot 2026-03-19 at 13 36 41" src="https://github.com/user-attachments/assets/6fd54197-6e02-41c7-8d05-35952bcb214d" />
+
 
 **Remarks**
 
