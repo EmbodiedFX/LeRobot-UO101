@@ -120,6 +120,11 @@
   export FRONT_UID=0x21300001bcf2cd1
   export WRIST_UID=0x11200001bcf2cd1
   ```
+3. 使用类似下面的命令尝试拍照，调整摄像头（尤其是 front）的视野使得 640x480 的分辨率拍出来的照片完整包含工作区：
+  ```bash
+  ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i "0:none" -frames:v 1 test.jpg
+  # 虽然使用`PhotoBooth`系统应用能实时观看摄像头的视野，但是其分辨率一般拉到最高，且不能调整，而这边后续采集数据需要的是 640x480 分辨率下的视野
+  ```
 4. 接下来可以尝试遥操，即用主机械臂控制从机械臂： 
   ```bash
   chmod +x teleop_macos.sh  # 只需跑一次
@@ -170,7 +175,7 @@
 
 1. 后续模型推理只能看到摄像头的视频输入，所以采集数据时，最好看着实时捕获的视频，采取**只看视频画面也能完成任务**的动作路径——去除模型学不到的上帝视角。 
 2. 之所以遥操和数据采集要包到脚本里，而不是像[教程](https://huggingface.co/docs/lerobot/il_robots#teleoperate-with-cameras)那样简洁，是因为 MacBook 中摄像头没有固定路径和ID，单次插入中唯一固定的是它们的 UID。因此需要一个脚本，先根据 UID 找到目标摄像头的动态 ID，然后再送给`lerobot-teleoperate`和`lerobot-record`命令使用。
-3. 脚本里关于摄像头分辨率、帧率等的设定可以改。要看摄像头本身所支持的配置，可以使用脚本`cam_formats.swift`：
+3. 脚本里关于摄像头分辨率、帧率等的设定可以改（不过并非越高越好：考虑到推理时，如果输入视频分辨率太高，MacBook 上模型推理速度可能跟不上而无法进行；而如果到时候换用更低的分辨率，那么训练数据分辨率高、推理输入分辨率低，这个不一致会导致模型泛化性差。所以还不如采集数据的时候就使用推理所支持的低分辨率）。要看摄像头本身所支持的配置，可以使用脚本`cam_formats.swift`：
   ```bash
   swift cam_formats.swift '摄像头的UID'
   ```
@@ -257,7 +262,7 @@ accelerate launch \
 训练结束后，模型拷贝回 MacBook 的`TRAIN_DATA_PATH`路径。
 
 
-## 七、MacBook 上模型推理控制机械臂
+# 七、MacBook 上模型推理控制机械臂
 
 确定推理数据的存放路径（推理也可以认为是一种数据采集的过程；这个路径也是默认相对于`$HF_HOME/lerobot`），设置环境变量如
 
@@ -265,7 +270,7 @@ accelerate launch \
 export EVAL_DATA_PATH=local/eval_so100
 ```
 
-然后确保 follower 机械臂，和两个摄像头与 MacBook 连通后，运行脚本，尝试一集推理：
+然后确保 follower 机械臂及两个摄像头与 MacBook 连通后，运行脚本，尝试一集推理：
 
 ```bash
 chmod +x eval_1e_macos.sh
