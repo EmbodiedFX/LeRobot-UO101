@@ -16,7 +16,7 @@
 
 - **SO101** 是本次使用的机械臂本体。
 - **LeRobot** 是把模型、数据集、评测入口统一起来的工具链。
-- **ACT** 是本次使用的 VLA policy。
+- **ACT** 是本次使用的 VLA policy（52M参数）。
 
 ## 二、适用环境
 
@@ -115,25 +115,29 @@
   # 每次连接摄像头和 MacBook 都需要重做一次，因为 UID 不固定
   swift list_cams.swift
   ```
-2. 将确定的 UID 设置为环境变量，以供后面反复使用：
+2. 将确定的 UID 设置为环境变量，如：
   ```bash
   export FRONT_UID=0x21300001bcf2cd1
   export WRIST_UID=0x11200001bcf2cd1
   ```
-3. 接下来可以尝试遥操，即用主机械臂控制从机械臂： 
+4. 接下来可以尝试遥操，即用主机械臂控制从机械臂： 
   ```bash
-  chmod +x teleop_macos.sh
+  chmod +x teleop_macos.sh  # 只需跑一次
   ./teleop_macos.sh
   ```
-4. 遥操熟悉后，就可以开始采集数据。比如，以“抓取一根香蕉为例并放进箱子”为目标任务，可以这样采集一集数据（就是完成一次任务的过程）：
+5. 遥操熟悉后，就可以开始采集数据。先确定数据的存放路径并设置环境变量（这个路径默认相对于`$HF_HOME/lerobot`，其中`$HF_HOME`默认为`$HOME/.cache/huggingface`），如：
+  ```bash
+  export TRAIN_DATA_PATH=local/record-test
+  ```
+6. 以“抓取一根香蕉为例并放进箱子”为目标任务，可以这样采集一集数据（集，episode，就是完成一次任务的过程）：
   ```bash
   chmod +x record_1e_macos.sh
   ./record_1e_macos.sh
   ```
-5. 脚本里硬编码了若干元信息。如将与采集数据配对的文本指令 `dataset.single_task="Grab the banana and place it into the bin"`，又如数据集保存的相对路径`dataset.repo_id=local/record-test`，每集采集的时长`dataset.episode_time_s=20`等。可以按需修改。
-5. 一集采集出来的数据样例如下：
+7. 脚本里硬编码了若干元信息。如将与采集数据配对的文本指令 `dataset.single_task="Grab the banana and place it into the bin"`，又如每集采集的时长`dataset.episode_time_s=20`等。可以按需修改。
+8. 一集采集出来的数据样例如下：
   ```
-  (lerobot) EmbodiedFX@MacBook lerobot % tree ~/.cache/huggingface/lerobot/local/record-test
+  (lerobot) EmbodiedFX@MacBook lerobot % tree ~/.cache/huggingface/lerobot/$TRAIN_DATA_PATH
   /Users/EmbodiedFX/.cache/huggingface/lerobot/local/record-test
   ├── data
   │   └── chunk-000
@@ -153,7 +157,7 @@
           └── chunk-000
             └── file-000.mp4
   ```
-6. 采集完第一集数据后，后续可以添加`resume`选项，增量地添加一集数据：
+9. 采集完第一集数据后，后续可以添加`resume`选项，增量地添加一集数据：
   ```bash
   ./record_1e_macos.sh --resume
   ```
@@ -170,3 +174,100 @@
   ```bash
   swift cam_formats.swift '摄像头的UID'
   ```
+4. 如果看回放（比如手动审视 `videos/observation.images.front` 里面的视频）后发现某几集数据采错了、不想要，可以通过下面的命令删掉：
+  ```
+  lerobot-edit-dataset \
+  --repo_id $TRAIN_DATA_PATH \
+  --operation.type delete_episodes \
+  --operation.episode_indices "[索引1, 索引2, 等等]"
+   ```
+
+# 六、模型训练
+
+> 下面预估时间基于 30 集的数据量（使用原版`record_1e_macos.sh`采集30次）。如果更改了相机分辨率、数据量等，预估时间会不一样。
+
+首先，确定模型存放的路径（相对于当前工作目录）并设置环境变量，如：
+
+```bash
+export POLICY_PATH=outputs/train/act_so101_test
+```
+
+然后，取决于你手边的资源，有如下述选项：
+
+## （一）在 MacBook 上训练
+
+使用形如下列的命令训练：
+
+```bash
+lerobot-train \
+  --dataset.repo_id=$TRAIN_DATA_PATH \
+  --policy.type=act \
+  --output_dir=$POLICY_PATH \
+  --job_name=act_so101_test \
+  --policy.device=mps \
+  --policy.push_to_hub=False \
+  --wandb.enable=false \
+  --batch_size=1 \
+  --num_workers=0
+```
+
+亲测跑得动，但是预估34小时左右。
+
+## (二) 在 Ubuntu 服务器上训练
+
+把训练数据从 MacBook 拷贝到服务器上，并设置好那边的`TRAIN_DATA_PATH`(again，相对于`$HF_HOME/lerobot`)，如：
+
+```bash
+export TRAIN_DATA_PATH=local/record-test
+```
+
+单卡的话，使用形如以下命令训练（H100上预估8.6小时，占用63G内存）：
+
+```bash
+lerobot-train \
+  --dataset.repo_id=$TRAIN_DATA_PATH \
+  --policy.type=act \
+  --output_dir=$POLICY_PATH \
+  --job_name=act_so101_test \
+  --policy.device=cuda \
+  --policy.push_to_hub=False \
+  --wandb.enable=false \
+  --batch_size=8
+```
+
+多卡的话，使用形如以下命令训练（`num_processes`和`batch_size`的乘积为 **effective batch size**——此处为 8）：
+
+```bash
+accelerate launch \
+  --multi_gpu \
+  --num_processes=8 \
+  $(which lerobot-train) \
+  --dataset.repo_id=$TRAIN_DATA_PATH \
+  --policy.type=act \
+  --output_dir=$POLICY_PATH \
+  --job_name=act_so101_test \
+  --policy.device=cuda \
+  --policy.push_to_hub=false \
+  --wandb.enable=false \
+  --batch_size=1
+```
+
+8卡H100上3.5小时完成，每张卡占用10G内存。
+
+训练结束后，模型拷贝回 MacBook 的`TRAIN_DATA_PATH`路径。
+
+
+## 七、MacBook 上模型推理控制机械臂
+
+确定推理数据的存放路径（推理也可以认为是一种数据采集的过程；这个路径也是默认相对于`$HF_HOME/lerobot`），设置环境变量如
+
+```bash
+export EVAL_DATA_PATH=local/eval_so100
+```
+
+然后确保 follower 机械臂，和两个摄像头与 MacBook 连通后，运行脚本，尝试一集推理：
+
+```bash
+chmod +x eval_1e_macos.sh
+./eval_1e_macos.sh
+```
