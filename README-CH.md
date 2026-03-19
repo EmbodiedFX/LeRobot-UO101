@@ -29,9 +29,11 @@
 
 [SO101 机械臂](https://github.com/TheRobotStudio/SO-ARM100)
   - 两台本体，一台 Leader，一台 Follower（遥操时必要的两个角色）
-    - 如果没有本体，可以使用 3D 打印机打印部件（参照[此教程](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#printing-the-parts)）
-  - 每个本体还需要一块控制板，这个没法打印，需要参考这里的[渠道](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts)买
-  - 还需要 12 块 [Feetech 电机](https://github.com/iotdesignshop/Feetech-tuna)（两台本体各 6 块），也没法打印需要购买
+    - 如果没有本体，可以购买（[渠道](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts)）或使用 3D 打印机打印部件（参照[此教程](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#printing-the-parts)）
+  - 每个本体还需要一块控制板
+    - 这个没法打印，需要买（[渠道](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts)）
+  - 还需要 12 块 [Feetech 电机](https://github.com/iotdesignshop/Feetech-tuna)（两台本体各 6 块）
+    - 也没法打印，需要购买（[渠道](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts)）
 
 摄像头
 - 两个，一个拍全局信息（后面称为“front”），一个拍机械臂爪子（后面称为“wrist”）。需要有固定的地方或者能够固定在机械臂上。
