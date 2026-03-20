@@ -333,3 +333,9 @@ Then make sure the follower robotic arm and both cameras are connected to the Ma
 chmod +x eval_1e_macos.sh
 ./eval_1e_macos.sh
 ```
+
+Similarly, for subsequent inference runs, add the resume option:
+
+```bash
+./eval_1e_macos.sh --resume
+```
