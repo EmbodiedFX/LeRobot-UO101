@@ -260,11 +260,11 @@ accelerate launch \
 
 默认训练10万步。亲测8卡H100上2.25小时完成，每张卡约占用3GB内存。
 
-训练结束后，模型拷贝回 MacBook 的`TRAIN_DATA_PATH`路径。
+训练结束后，模型从服务器的`POLICY_PATH`拷贝回 MacBook 的`POLICY_PATH`路径。因为`$POLICY_PATH`目录包含中间状态和训练动态，推理是不必要的。为了节省存储空间，可以保留目录层次结构地拷贝`$POLICY_PATH/checkpoints/last/pretrained_model`这个子目录的内容。
 
 **Remarks**
 
-lerobot 环境和脚本天然支持 W&B。如果需要使用 W&B 可视化训练过程（训练动态、系统资源使用情况），可以先在终端登陆
+1. lerobot 环境和脚本天然支持 W&B。如果需要使用 W&B 可视化训练过程（训练动态、系统资源使用情况），可以先在终端登陆
 
 ```bash
 export WANDB_API_KEY=<你的 W&B API key>
