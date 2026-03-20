@@ -306,3 +306,9 @@ export EVAL_DATA_PATH=local/eval_so100
 chmod +x eval_1e_macos.sh
 ./eval_1e_macos.sh
 ```
+
+类似地，如果进行后续推理，需加上`resume`的选项：
+
+```bash
+./eval_1e_macos.sh --resume
+```
