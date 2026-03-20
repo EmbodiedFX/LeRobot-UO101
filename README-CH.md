@@ -287,10 +287,10 @@ wandb login
 
 2. 除了 ACT，LeRobot 还适配其他模型：SmolVLA、π₀、π₀-FAST、π₀.₅ 、GR00T N1.5、X-VLA、WALL-OSS 等。它们对训练和推理的资源有不同的要求，下面是简单对比的表格：
 
-| 模型 | 参考 | LeRobot实现的参数量 | 训练传参 | 训练显存 | 8卡H100训练10万步时长（每步8集） | MacBook推理体感 |
+| 模型 | 参考 | 参数量<br>LeRobot实现 | 训练传参 | 训练显存 | 训练10万步时长<br>（每步8集；8卡H100） | MacBook推理体感 |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | ACT | [论文](https://arxiv.org/abs/2304.13705) | 52M | --policy.type=act | 3GB每卡 | 2.25h | 流畅 |
-| π₀.₅ | [论文](https://arxiv.org/abs/2504.16054) | 4B | --policy.type=pi05 --policy.train_expert_only=true | 29B每卡 | 4h | 待定 |
+| π₀.₅ | [论文](https://arxiv.org/abs/2504.16054) | 4B | --policy.type=pi05<br>--policy.train_expert_only=true | 29GB每卡 | 4h | 待定 |
 
 # 七、MacBook 上模型推理控制机械臂
 
