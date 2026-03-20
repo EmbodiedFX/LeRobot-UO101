@@ -285,12 +285,19 @@ wandb login
 
 <img width="5056" height="3456" alt="W B Chart 3_19_2026, 1_24_41 PM" src="https://github.com/user-attachments/assets/cee1df19-f20a-4bbe-887c-d15de93a5145" />
 
-2. 除了 ACT，LeRobot 还适配其他模型：SmolVLA、π₀、π₀-FAST、π₀.₅ 、GR00T N1.5、X-VLA、WALL-OSS 等。它们对训练和推理的资源有不同的要求，下面是简单对比的表格：
+2. 除了 ACT，LeRobot 还适配其他模型：SmolVLA、π₀、π₀-FAST、π₀.₅ 、GR00T N1.5、X-VLA、WALL-OSS 等，可以试试。它们对训练和推理的资源有不同的要求，下面是简单对比的表格：
 
 | 模型 | 参考 | 参数量<br>LeRobot实现 | 训练传参 | 训练显存 | 训练10万步时长<br>（每步8集；8卡H100） | MacBook推理体感 |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | ACT | [论文](https://arxiv.org/abs/2304.13705) | 52M | `--policy.type=act` | 3GB每卡 | 2.25h | 流畅 |
 | π₀.₅ | [论文](https://arxiv.org/abs/2504.16054) | 4B | `--policy.type=pi05 --policy.train_expert_only=true` | 29GB每卡 | 4h | 待定 |
+
+## Troubleshooting
+
+1. 跑通 π 系列的模型（π₀、π₀-FAST、π₀.₅）需要额外安装依赖，否则`transformers`库版本对不上：
+  ```bash
+  pip install -e ".[pi]"
+  ```
 
 # 七、MacBook 上模型推理控制机械臂
 
