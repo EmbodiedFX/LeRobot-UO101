@@ -318,6 +318,13 @@ Then replace `--wandb.enable=false` in the training command with the following a
 |  ACT  | [Paper](https://arxiv.org/abs/2304.13705) |             52M            |                  `--policy.type=act`                 |  3 GB per GPU |                        2.25 h                        |            Smooth            |
 |  π₀.₅ | [Paper](https://arxiv.org/abs/2504.16054) |             4B             | `--policy.type=pi05 --policy.train_expert_only=true` | 29 GB per GPU |                          4 h                         |              TBD             |
 
+## Troubleshooting
+
+1. Running the π-series models (π₀, π₀-FAST, and π₀.₅) requires installing additional dependencies; otherwise, the `transformers` library version will not match:
+
+   ```bash
+   pip install -e ".[pi]"
+   ```
 
 # 7. Using the Model on a MacBook to Control the Robotic Arm
 
