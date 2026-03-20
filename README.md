@@ -316,7 +316,7 @@ Then replace `--wandb.enable=false` in the training command with the following a
 | Model |                 Reference                 | Parameter Count in LeRobot |                   Training Argument                  | Training VRAM | Time for 100k Steps (8× H100; 8 episodes per step) | MacBook Inference Experience |
 | :---: | :---------------------------------------: | :------------------------: | :--------------------------------------------------: | :-----------: | :--------------------------------------------------: | :--------------------------: |
 |  ACT  | [Paper](https://arxiv.org/abs/2304.13705) |             52M            |                  `--policy.type=act`                 |  3 GB per GPU |                        2.25 h                        |            Smooth            |
-|  π₀.₅ | [Paper](https://arxiv.org/abs/2504.16054) |             4B             | `--policy.type=pi05 --policy.train_expert_only=true` | 29 GB per GPU |                          4 h                         |              TBD             |
+|  π₀.₅ | [Paper](https://arxiv.org/abs/2504.16054) |             4B             | `--policy.type=pi05 --policy.train_expert_only=true` | 29 GB per GPU |                          4 h                         |              Infeasible             |
 
 ## Troubleshooting
 
