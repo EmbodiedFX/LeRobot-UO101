@@ -311,7 +311,7 @@ Then replace `--wandb.enable=false` in the training command with the following a
 
 <img width="5056" height="3456" alt="W B Chart 3_19_2026, 1_24_41 PM" src="https://github.com/user-attachments/assets/cee1df19-f20a-4bbe-887c-d15de93a5145" />
 
-2. xxx
+2. In addition to ACT, LeRobot also supports other models such as SmolVLA, π₀, π₀-FAST, π₀.₅, GR00T N1.5, X-VLA, and WALL-OSS. They have different training and inference resource requirements. The table below provides a brief comparison.
 
 | Model |                 Reference                 | Parameter Count in LeRobot |                   Training Argument                  | Training VRAM | Time for 100k Steps (8× H100; 8 episodes per step) | MacBook Inference Experience |
 | :---: | :---------------------------------------: | :------------------------: | :--------------------------------------------------: | :-----------: | :--------------------------------------------------: | :--------------------------: |
