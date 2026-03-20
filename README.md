@@ -285,7 +285,8 @@ accelerate launch \
 
 By default, training runs for 100,000 steps. In practice, it took 2.25 hours on 8× H100 GPUs, with about 3 GB of memory used per GPU.
 
-After training is complete, copy the model back to the MacBook under the `TRAIN_DATA_PATH` path.
+After training is complete, copy the model from the server’s `POLICY_PATH` back to the MacBook’s `POLICY_PATH`. Since the `$POLICY_PATH` directory contains intermediate states and training dynamics that are unnecessary for inference, you can save storage space by preserving the directory structure while copying only the contents of the `$POLICY_PATH/checkpoints/last/pretrained_model` subdirectory.
+
 
 **Remarks**
 
