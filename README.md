@@ -19,6 +19,8 @@ What are the components mentioned in this article:
 - **LeRobot** is the toolchain that unifies models, datasets, and evaluation entry points.
 - **ACT** is the VLA policy used here (52M parameters).
 
+> If training and inference resources are sufficient, you can also switch to other models already supported by LeRobot, such as SmolVLA, π₀, π₀-FAST, π₀.₅, GR00T N1.5, X-VLA, and WALL-OSS. Guidance for these is also provided below.
+
 ## 2. Applicable Environment
 
 This article assumes the following default environment:
