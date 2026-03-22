@@ -66,7 +66,9 @@
 ## 四、SO101 机械臂组装
 
 1. 根据[教程](https://huggingface.co/docs/lerobot/so101#clean-parts)组装好 Leader 和 Follower，其中每个电机组装前最好先接上一条线。
-2. 将每个本体的控制板连接上电源，并连接上 MacBook。随后确认每个本体控制板连的是哪个端口：
+   1. 特别地，根据[这里](https://huggingface.co/docs/lerobot/so101#step-by-step-assembly-instructions)的建议，Follower 的电机齿轮比可以都是 1 / 345，而 Leader 由上（夹子）到下（底座）六个电机的齿轮比应有所不同（为了人类示教省力些），分别是：1 / 147, 1 / 147, 1 / 147, 1 / 191, 1 / 345, 1 / 191。
+   2. 同时，根据[这里](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts)的建议，Follower 的电机应该都是 12V（这样可以更有力些），Leader 的电机则是 7.4V，连接电源适配器时要匹配电压。
+3. 将每个本体的控制板连接上电源，并连接上 MacBook。随后确认每个本体控制板连的是哪个端口：
   ```bash
   # 此后，若控制板连接新 MacBook 才需要重做一次
   lerobot-find-port
