@@ -70,27 +70,29 @@ Cameras
 ## 4. Assembling the SO101 Robotic Arm
 
 1. Assemble the Leader and Follower according to the [tutorial](https://huggingface.co/docs/lerobot/so101#clean-parts). It is best to connect a cable to each motor before assembly.
-2. Connect each arm’s control board to power and to the MacBook. Then confirm which port each control board is connected to:
+    1. In particular, according to the recommendation [here](https://huggingface.co/docs/lerobot/so101#step-by-step-assembly-instructions), all motors on the Follower can use a gear ratio of 1 / 345, while the six motors on the Leader should use different gear ratios from top (gripper) to bottom (base) to make human demonstration easier. Specifically, they are: 1 / 147, 1 / 147, 1 / 147, 1 / 191, 1 / 345, and 1 / 191.
+    2. At the same time, according to the recommendation [here](https://github.com/TheRobotStudio/SO-ARM100?tab=readme-ov-file#sourcing-parts), the Follower motors should all be 12V (for stronger actuation), while the Leader motors should be 7.4V. Make sure the power adapter voltage matches accordingly when connecting power.
+3. Connect each arm’s control board to power and to the MacBook. Then confirm which port each control board is connected to:
 
    ```bash
    # After this, you only need to redo it if the control board is connected to a new MacBook
    lerobot-find-port
    # Follow the instructions shown in the output
    ```
-3. After confirming the ports, set them as environment variables for repeated use later:
+4. After confirming the ports, set them as environment variables for repeated use later:
 
    ```bash
    export LEADER_PORT=/dev/tty.usbmodem5A7A0594001
    export FOLLOWER_PORT=/dev/tty.usbmodem5A7C1172111
    ```
-4. Grant access permissions to the ports:
+5. Grant access permissions to the ports:
 
    ```bash
    # Must be done every time the MacBook and control boards are connected
    sudo chmod a+rw $LEADER_PORT  # leader
    sudo chmod a+rw $FOLLOWER_PORT  # follower
    ```
-5. According to the [tutorial](https://huggingface.co/docs/lerobot/so101#2-set-the-motors-ids-and-baudrates), **assign IDs** to each motor on both arm bodies:
+6. According to the [tutorial](https://huggingface.co/docs/lerobot/so101#2-set-the-motors-ids-and-baudrates), **assign IDs** to each motor on both arm bodies:
 
    ```bash
    # After this, you only need to redo it if you change the motor connection order,
@@ -98,7 +100,7 @@ Cameras
    lerobot-setup-motors --robot.type=so101_follower --robot.port=$FOLLOWER_PORT
    lerobot-setup-motors --teleop.type=so101_leader --teleop.port=$LEADER_PORT
    ```
-6. Calibrate both arm bodies according to the [tutorial](https://huggingface.co/docs/lerobot/so101#calibrate) (essentially determining the working range of each motor):
+7. Calibrate both arm bodies according to the [tutorial](https://huggingface.co/docs/lerobot/so101#calibrate) (essentially determining the working range of each motor):
 
    ```bash
    # After this, you only need to redo it if the control board is connected to a new MacBook
@@ -107,7 +109,7 @@ Cameras
    lerobot-calibrate --robot.type=so101_follower --robot.port=$FOLLOWER_PORT --robot.id=my_awesome_follower_arm
    lerobot-calibrate --teleop.type=so101_leader --teleop.port=/$LEADER_PORT --teleop.id=my_awesome_leader_arm
    ```
-7. Fix the robotic arms in suitable positions on the desk.
+8. Fix the robotic arms in suitable positions on the desk.
 
 ### Troubleshooting
 
