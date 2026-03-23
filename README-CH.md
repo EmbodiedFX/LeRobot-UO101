@@ -294,6 +294,16 @@ wandb login
 | ACT | [论文](https://arxiv.org/abs/2304.13705) | 52M | `--policy.type=act` | 3GB每卡 | 2.25h | 流畅 |
 | π₀.₅ | [论文](https://arxiv.org/abs/2504.16054) | 4B | `--policy.type=pi05 --policy.train_expert_only=true` | 29GB每卡 | 4h | 完全不行 |
 
+3. 如果训练中止，想要从某个最近 checkpoint 恢复训练，可以在训练命令加上类似这些选项实现：
+
+```bash
+--policy.pretrained_path=$POLICY_PATH/checkpoints/060000  \ # 换成你的 checkpoint 的路径
+--resume=true  \
+--config_path=$POLICY_PATH/checkpoints/060000/pretrained_model/train_config.json 
+```
+
+此时 W&B 也自动在本来的 run 里呈现，不会新开一个run（不过已有轮次的数据不会覆盖）。
+
 ## Troubleshooting
 
 1. 跑通 π 系列的模型（π₀、π₀-FAST、π₀.₅）需要额外安装依赖，否则`transformers`库版本对不上：
