@@ -88,7 +88,7 @@ Cameras
 5. Grant access permissions to the ports:
 
    ```bash
-   # Must be done every time the MacBook and control boards are connected
+   # Must be done every time when the control board is connected with a new MacBook
    sudo chmod a+rw $LEADER_PORT  # leader
    sudo chmod a+rw $FOLLOWER_PORT  # follower
    ```
@@ -133,7 +133,7 @@ Cameras
 1. Install the two cameras separately (one front, one wrist), and connect them to the MacBook. Then identify their UIDs by plugging and unplugging them and comparing the outputs of the following command:
 
    ```bash
-   # Must be redone every time the cameras are connected to the MacBook,
+   # Must be done every time when the camera is connected with a new MacBook
    # because the UID is not fixed
    swift list_cams.swift
    ```
