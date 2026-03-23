@@ -315,10 +315,11 @@ Then replace `--wandb.enable=false` in the training command with the following a
 
 2. In addition to ACT, LeRobot also supports other models such as SmolVLA, π₀, π₀-FAST, π₀.₅, GR00T N1.5, X-VLA, and WALL-OSS. They have different training and inference resource requirements. The table below provides a brief comparison.
 
-| Model |                 Reference                 | Parameter Count in LeRobot |                   Training Argument                  | Training VRAM | Time for 100k Steps (8× H100; 8 episodes per step) | MacBook Inference Experience |
-| :---: | :---------------------------------------: | :------------------------: | :--------------------------------------------------: | :-----------: | :--------------------------------------------------: | :--------------------------: |
-|  ACT  | [Paper](https://arxiv.org/abs/2304.13705) |             52M            |                  `--policy.type=act`                 |  3 GB per GPU |                        2.25 h                        |            Smooth            |
-|  π₀.₅ | [Paper](https://arxiv.org/abs/2504.16054) |             4B             | `--policy.type=pi05 --policy.train_expert_only=true` | 29 GB per GPU |                          4 h                         |              Infeasible             |
+| Model |                 Reference                 | Parameter Count in LeRobot |             Prerequisites            |                  Training Argument                  | Training VRAM | Time for 100k Steps (8× H100; 8 episodes per step) | MacBook Inference Experience |
+| :---: | :---------------------------------------: | :------------------------: | :--------------------------------------------------: | :--------------------------------------------------: | :-----------: | :--------------------------------------------------: | :--------------------------: |
+|  ACT  | [Paper](https://arxiv.org/abs/2304.13705) |             52M            |                  NA                   | `--policy.type=act`                                    |  3 GB per GPU |                        2.25 h                        |            Smooth            |
+| SmolVLA | [Paper](https://arxiv.org/pdf/2506.01844) | 450M                     | `pip install num2words`               | `--policy.type=smolvla --policy.train_expert_only=true` | 4 GB per GPU |                        3.75 h                        |            TBD                    |
+|  π₀.₅ | [Paper](https://arxiv.org/abs/2504.16054) |             4B             | `pip install -e ".[pi]"`              |  `--policy.type=pi05 --policy.train_expert_only=true` | 29 GB per GPU |                          4 h                         |              Infeasible             |
 
 3. If training is interrupted and you want to resume from a recent checkpoint, you can add options like the following to the training command:
 
