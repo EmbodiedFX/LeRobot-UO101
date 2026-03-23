@@ -320,6 +320,16 @@ Then replace `--wandb.enable=false` in the training command with the following a
 |  ACT  | [Paper](https://arxiv.org/abs/2304.13705) |             52M            |                  `--policy.type=act`                 |  3 GB per GPU |                        2.25 h                        |            Smooth            |
 |  π₀.₅ | [Paper](https://arxiv.org/abs/2504.16054) |             4B             | `--policy.type=pi05 --policy.train_expert_only=true` | 29 GB per GPU |                          4 h                         |              Infeasible             |
 
+3. If training is interrupted and you want to resume from a recent checkpoint, you can add options like the following to the training command:
+
+```bash
+--policy.pretrained_path=$POLICY_PATH/checkpoints/060000  # replace with the path to your checkpoint
+--resume=true \
+--config_path=$POLICY_PATH/checkpoints/060000/pretrained_model/train_config.json
+```
+
+In this case, W&B will also continue showing the results in the original run instead of creating a new one (though data from previous steps will not be overwritten).
+
 ## Troubleshooting
 
 1. Running the π-series models (π₀, π₀-FAST, and π₀.₅) requires installing additional dependencies; otherwise, the `transformers` library version will not match:
