@@ -292,7 +292,7 @@ wandb login
 | 模型 | 参考 | 参数量<br>LeRobot实现 | 前置要求 | 训练传参 | 训练显存 | 训练10万步时长<br>（每步8集；8卡H100） | MacBook推理体感 |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | ACT | [论文](https://arxiv.org/abs/2304.13705) | 52M | NA | `--policy.type=act` | 3GB每卡 | 2.25h | 流畅 |
-| SmolVLA | [论文](https://arxiv.org/pdf/2506.01844) | 450M | `pip install num2words` | `--policy.type=smolvla --policy.train_expert_only=true` | 4GB每卡 | 3.75h | 待定 |
+| SmolVLA | [论文](https://arxiv.org/pdf/2506.01844) | 450M | `pip install num2words` | `--policy.type=smolvla --policy.train_expert_only=true` | 4GB每卡 | 3.75h | 可以完成任务但动作不流畅 |
 | π₀.₅ | [论文](https://arxiv.org/abs/2504.16054) | 4B | `pip install -e ".[pi]"` | `--policy.type=pi05 --policy.train_expert_only=true` | 29GB每卡 | 4h | 完全不行 |
 
 3. 如果训练中止，想要从某个最近 checkpoint 恢复训练，可以在训练命令加上类似这些选项实现：
