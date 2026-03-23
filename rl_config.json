@@ -1,0 +1,31 @@
+{
+  "env": {
+    "processor": {
+      "observation": {
+        "add_joint_velocity_to_observation": true,
+        "add_current_to_observation": false,
+        "display_cameras": false
+      },
+      "image_preprocessing": {
+        "crop_params_dict": {
+          "observation.images.front": [180, 250, 120, 150],
+          "observation.images.side": [180, 207, 180, 200]
+        },
+        "resize_size": [128, 128]
+      },
+      "inverse_kinematics": {
+        "urdf_path": "so101_new_calib.urdf",
+        "target_frame_name": "end_effector",
+        "end_effector_bounds": {
+          "min": [0.16, -0.08, 0.03],
+          "max": [0.24, 0.2, 0.1]
+        },
+        "end_effector_step_sizes": {
+          "x": 0.02,
+          "y": 0.02,
+          "z": 0.02
+        }
+      }
+    }
+  }
+}
